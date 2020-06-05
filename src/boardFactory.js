@@ -3,12 +3,12 @@ const battleshipFactory = require("./battleshipFactory.js");
 const BOARDSIZE = 10;
 function boardFactory() {
   let state = [];
+  //initializes 10 by 10 array of an empty game board
   for (let i = 0; i < BOARDSIZE * 10; i++) {
     state.push({ ship: false, hit: false });
   }
   let ships = [];
   return {
-    //initializes 10 by 10 array of an empty game board
     state: state,
     addShip(position, size, align) {
       //checks if the position can hold a ship
@@ -16,11 +16,13 @@ function boardFactory() {
       if (checkValidPosition(position, size, align, state) === false) {
         return false;
       } else {
-        for (let i = 0; i < size; i++) {
-          this.state[position + i].ship = true;
-        }
-        for (i = 0; i < size; i++) {
-          this.state[position + 10 * i].ship = true;
+        if (align === "horiz") {
+          this.state.fill(battleshipFactory(size), position, position + size);
+        } else {
+        this.state[position] = battleshipFactory(size)
+          for (let i = 0; i < size; i++) {
+            this.state[position + (i * 10)] = this.state[position]
+          }
         }
       }
     },
@@ -34,6 +36,10 @@ function boardFactory() {
 
 function checkValidPosition(position, size, align, state) {
   if (align === "horiz") {
+    //working around the 0 edge case
+    if (position === 0 && size <= 9) {
+      return true;
+    }
     if (
       Math.floor(position / 10) !== Math.floor((position + size) / 10) ||
       position + size > 99
