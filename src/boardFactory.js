@@ -9,6 +9,7 @@ function boardFactory() {
   }
   let ships = [];
   return {
+    ships: ships,
     state: state,
     addShip(position, size, align) {
       //checks if the position can hold a ship
@@ -17,11 +18,17 @@ function boardFactory() {
         return false;
       } else {
         if (align === "horiz") {
-          this.state.fill(battleshipFactory(size), position, position + size);
+          this.state.fill(
+            battleshipFactory(size, align),
+            position,
+            position + size
+          );
+          ships.push(state[position]);
         } else {
-        this.state[position] = battleshipFactory(size)
+          this.state[position] = battleshipFactory(size, align);
+          ships.push(state[position]);
           for (let i = 0; i < size; i++) {
-            this.state[position + (i * 10)] = this.state[position]
+            this.state[position + i * 10] = this.state[position];
           }
         }
       }
@@ -29,9 +36,56 @@ function boardFactory() {
     receiveAttack(position) {
       if (this.state[position].ship === false) {
         this.state[position].hit = true;
+      } else {
+        let firstPlace = firstPosition(
+          this.state,
+          position,
+          this.state[position].align
+        );
+        for (let i = 0; i < this.ships.length; i++) {
+          if (this.ships[i] === this.state[position]) {
+            if (this.ships[i].align === "horiz") {
+              if (this.ships[i].hit(position - firstPlace) === false) {
+                return false;
+              }
+
+              this.ships[i].hit(position - firstPlace);
+            } else {
+              if (this.ships[i].hit((position - firstPlace) / 10) != false) {
+                return false;
+              }
+              this.ships[i].hit((position - firstPlace) / 10);
+            }
+          }
+        }
       }
     },
+    allSunk() {
+      len = this.ships.length;
+      for (let i = 0; i < len; i++) {
+        if (this.ships[i].sunk() === false) {
+          return false;
+        }
+      }
+      return true;
+    },
   };
+}
+
+function firstPosition(state, position, align) {
+  if (align === "horiz") {
+    if (state[position] !== state[position - 1]) {
+      return position;
+    } else {
+      return firstPosition(state, position - 1, align);
+    }
+  } else {
+    if (state[position] !== state[position - 10]) {
+      return position;
+    } else {
+      return firstPosition(state, position - 10, align);
+    }
+  }
 }
 
 function checkValidPosition(position, size, align, state) {

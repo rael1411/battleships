@@ -1,4 +1,4 @@
-function battleshipFactory(size)
+function battleshipFactory(size, align)
  {
   let hitArray = [];
   //initializing an array of parts that could be hit. 0 = undamaged, 1 = hit.
@@ -9,6 +9,9 @@ function battleshipFactory(size)
     length: size,
     health: hitArray,
     hit(position) {
+      if (this.health[position] === 1){
+        return false;
+      }
       this.health[position] = 1;
     },
     sunk() {
@@ -17,6 +20,7 @@ function battleshipFactory(size)
       }
       return true;
     },
+    align: align
   };
 }
 
