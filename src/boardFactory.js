@@ -1,7 +1,7 @@
 const battleshipFactory = require("./battleshipFactory.js");
 // boardsize refers to one side of the board
 const BOARDSIZE = 10;
-function boardFactory() {
+const boardFactory = () => {
   let state = [];
   //initializes 10 by 10 array of an empty game board
   for (let i = 0; i < BOARDSIZE * 10; i++) {
@@ -34,26 +34,25 @@ function boardFactory() {
       }
     },
     receiveAttack(position) {
+      //hits the empty board, only if it wasn't hit already
       if (this.state[position].ship === false) {
         this.state[position].hit = true;
       } else {
+        //finds first place, used to determine where the ship was hit
         let firstPlace = firstPosition(
           this.state,
           position,
           this.state[position].align
         );
+        //finds the correct ship
         for (let i = 0; i < this.ships.length; i++) {
           if (this.ships[i] === this.state[position]) {
             if (this.ships[i].align === "horiz") {
-              if (this.ships[i].hit(position - firstPlace) === false) {
-                return false;
-              }
-
+              //hits correct position for an horizontal ship
               this.ships[i].hit(position - firstPlace);
             } else {
-              if (this.ships[i].hit((position - firstPlace) / 10) != false) {
-                return false;
-              }
+              //hits correct position for vertical ship
+
               this.ships[i].hit((position - firstPlace) / 10);
             }
           }
@@ -70,7 +69,7 @@ function boardFactory() {
       return true;
     },
   };
-}
+};
 
 function firstPosition(state, position, align) {
   if (align === "horiz") {
