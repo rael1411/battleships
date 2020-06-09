@@ -15,7 +15,7 @@ it("refuses to attack if the turn is wrong", () => {
 });
 it("attacks correctly", () => {
   playerA.makeMove(4, computer);
-  expect(computer.board.state[4].hit).toBe(true);
+  expect(computer.board.state[4].shot).toBe(true);
 });
 it("passes the turn", () => {
   playerA.makeMove(4, computer);
@@ -27,7 +27,7 @@ it("AI can hit empty space", () => {
   computer.turn = true;
   computer.aiPlay(playerA);
   expect(playerA.board.state).toEqual(
-    expect.arrayContaining([{ hit: true, ship: false }])
+    expect.arrayContaining([{shot: true, presence: false, ship: {}}])
   );
 });
 

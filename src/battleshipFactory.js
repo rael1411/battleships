@@ -8,7 +8,6 @@ const battleshipFactory = (size, align) => {
     length: size,
     health: hitArray,
     hit(position) {
-
       this.health[position] = 1;
     },
     sunk() {

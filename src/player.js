@@ -22,17 +22,15 @@ const player = (turn, name = "default") => {
     aiPlay(opponent) {
       //if the previous move hit a ship
       if (!findLastShipHit(this.plays, opponent.board)) {
-        // chooses random number between 0 and 99
+        // chooses random number between 0 and 99 that it hasn't already chosen
         let choice = Math.floor(Math.random() * 100);
         while (choice in this.plays) {
           choice = Math.floor(Math.random() * 100);
         }
+        this.makeMove(choice, opponent);
+      } else {
+        choice = findLastShipHit(this.plays, opponent.board);
       }
-      else {
-        choice = (findLastShipHit(this.plays, opponent.board));
-      }
-      this.makeMove(choice, opponent);
-      return choice;
     },
   };
 };
@@ -56,17 +54,21 @@ legalPlay = (position, turn, opponent, plays) => {
 //returns false if it doesn't find one
 //returns the position of the last successful hit on unsunk ship otherwise
 findLastShipHit = (plays, board, counter = 0) => {
-  //if the counter is larger than the array of plays return false
+  return false;}
+/*   //if the counter is larger than the array of plays return false
   if (counter > plays.length) {
     return false;
   }
   //if it found a sunk ship try again to look for a ship
-  if (board.state[plays[plays.length-counter]].ship === false || board.state[plays[plays.length - counter]].sunk() === true) {
+  if (
+    board.state[plays[plays.length - counter]].presence === false ||
+    board.state[plays[plays.length - counter]].ship.sunk() === true
+  ) {
     counter++;
     findLastShipHit(plays, board, counter);
   } else {
     //randomizes an adjacent spot
-    let choice = -1;
+     let choice = -1;
     while (!legalPlay(choice)) {
       let random = Math.floor(Math.random() * 4);
       switch (random) {
@@ -82,9 +84,9 @@ findLastShipHit = (plays, board, counter = 0) => {
         case 3:
           choice = plays[plays.lenght - counter] + 10;
           break;
-      }
+      } 
     }
     return choice;
   }
-};
+}; */
 module.exports = player;
