@@ -8,41 +8,45 @@ const player = (turn, name = "default") => {
     plays: plays,
     makeMove(coordinates, opponent) {
       //refuses to make a move if it's not the player's turn
-      if (legalPlay(coordinates, this.turn, opponent, plays)) {
+      if (legalPlay(coordinates, this.turn, opponent.board.state, plays)) {
         //passes turn
         this.turn = false;
         opponent.turn = true;
         this.plays.push(coordinates);
         opponent.board.receiveAttack(coordinates);
         return true;
-      } else if (legalPlay(coordinates, this.turn, opponent) === false) {
+      } else {
         return false;
       }
     },
     aiPlay(opponent) {
       //if the previous move hit a ship
-      if (!findLastShipHit(this.plays, opponent.board)) {
+      if (findFirstShip(this.plays, opponent.board.state) === false) {
         // chooses random number between 0 and 99 that it hasn't already chosen
         let choice = Math.floor(Math.random() * 100);
-        while (choice in this.plays) {
+        while (this.plays.includes(choice)) {
           choice = Math.floor(Math.random() * 100);
         }
         this.makeMove(choice, opponent);
+        return choice;
       } else {
-        choice = findLastShipHit(this.plays, opponent.board);
+        let choice = findAHit(findFirstShip(this.plays, opponent.board.state), opponent.board.state, this.plays);
+        this.makeMove(choice, opponent);
+        return choice;
       }
     },
   };
 };
 
 //verifies if a move is legal
-legalPlay = (position, turn, opponent, plays) => {
+legalPlay = (position, turn, state, plays) => {
   if (
     position < 0 ||
     position > 99 ||
     turn === false ||
-    opponent.board.state[position].hit === true ||
-    position in plays
+    state[position] === undefined ||
+    state[position].shot === true ||
+    plays.includes(position)
   ) {
     return false;
   } else {
@@ -51,42 +55,42 @@ legalPlay = (position, turn, opponent, plays) => {
 };
 
 //searches for the last ship it hit that didn't sink
-//returns false if it doesn't find one
-//returns the position of the last successful hit on unsunk ship otherwise
-findLastShipHit = (plays, board, counter = 0) => {
-  return false;}
-/*   //if the counter is larger than the array of plays return false
-  if (counter > plays.length) {
+//returns false if it doesn't find one or it's the first play
+//returns the position of the last successful hit and unsunk ship otherwise
+findFirstShip = (plays, state) => {
+  if (plays.length <= 0){
     return false;
   }
-  //if it found a sunk ship try again to look for a ship
-  if (
-    board.state[plays[plays.length - counter]].presence === false ||
-    board.state[plays[plays.length - counter]].ship.sunk() === true
-  ) {
-    counter++;
-    findLastShipHit(plays, board, counter);
-  } else {
-    //randomizes an adjacent spot
-     let choice = -1;
-    while (!legalPlay(choice)) {
-      let random = Math.floor(Math.random() * 4);
-      switch (random) {
-        case 0:
-          choice = plays[plays.lenght - counter] - 1;
-          break;
-        case 1:
-          choice = plays[plays.lenght - counter] + 1;
-          break;
-        case 2:
-          choice = plays[plays.lenght - counter] - 10;
-          break;
-        case 3:
-          choice = plays[plays.lenght - counter] + 10;
-          break;
-      } 
+  for (let i = 0; i < plays.length; i++) {
+    if (state[plays[i]].presence) {
+      if (!state[plays[i]].ship.sunk()) {
+        return plays[i];
+      }
     }
-    return choice;
   }
-}; */
+  return false;
+};
+findAHit = (firstShip, state, plays) => {
+  let choice = -1;
+  while (!legalPlay(choice, true, state, plays)) {
+    let random = Math.floor(Math.random() * 4);
+    switch (random) {
+      case 0:
+        choice = firstShip - 1;
+        break;
+      case 1:
+        choice = firstShip + 1;
+        break;
+       case 2:
+        choice = firstShip - 10;
+        break;
+      case 3:
+        choice = firstShip + 10;
+        break; 
+    }
+  }
+  console.log(choice);
+  return choice;
+};
+
 module.exports = player;

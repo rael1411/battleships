@@ -37,5 +37,5 @@ it("AI tries to sink ships", () => {
   computer.makeMove(2, playerA);
   computer.turn = true;
   testplay = computer.aiPlay(playerA);
-  expect(testplay === 1 || testplay === 3).toBeTruthy();
+  expect(testplay === 1 || testplay === 3 || testplay == 12).toBeTruthy();
 });
