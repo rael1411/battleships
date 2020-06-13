@@ -1,0 +1,12 @@
+ 
+ .cell{
+    border: 1px solid black;
+ }
+ .board{
+     display: grid;
+     height:50vh;
+     width: 50vh;
+     grid-template-columns: repeat(10, 10%);
+     grid-template-rows: repeat(10, 10%);
+     padding: 5px;
+ }
