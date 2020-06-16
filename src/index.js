@@ -1,5 +1,6 @@
+require("./style.css")
 const player = require("./player")
-const renderBoard = require("./DOM")
-test = player(false, "test");
-renderBoard(test.board.state, test.name)
+const DOM = require("./DOM");
+const game = require("./game");
 
+game.sampleGame();

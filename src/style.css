@@ -4,9 +4,34 @@
  }
  .board{
      display: grid;
-     height:50vh;
-     width: 50vh;
+     height:70vh;
+     width: 70vh;
      grid-template-columns: repeat(10, 10%);
      grid-template-rows: repeat(10, 10%);
      padding: 5px;
+     top: 20vh;
+ }
+
+ #playerBoard{
+    position: absolute;
+    left: 30vh;
+    margin-right: 20px;
+ }
+ 
+ #computerBoard{
+    position:absolute;
+    right: 30vh;
+    margin-left: 20px;
+ }
+
+ .shot{
+     background-color: grey;
+ }
+
+ .hit{
+     background-color: red;
+ }
+
+ .sunk{
+     background-color: black;
  }

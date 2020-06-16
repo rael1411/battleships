@@ -1,4 +1,5 @@
 const boardFactory = require("./boardFactory");
+const game = require("./game");
 const player = (turn, name = "default") => {
   let plays = [];
   return {
@@ -7,6 +8,10 @@ const player = (turn, name = "default") => {
     turn: turn,
     plays: plays,
     makeMove(coordinates, opponent) {
+      if (game.gameOver(this, opponent) === this){
+        this.turn = false;
+        opponent.turn = false;
+      }
       //refuses to make a move if it's not the player's turn
       if (legalPlay(coordinates, this.turn, opponent.board.state, plays)) {
         //passes turn
@@ -30,7 +35,11 @@ const player = (turn, name = "default") => {
         this.makeMove(choice, opponent);
         return choice;
       } else {
-        let choice = findAHit(findFirstShip(this.plays, opponent.board.state), opponent.board.state, this.plays);
+        let choice = findAHit(
+          findFirstShip(this.plays, opponent.board.state),
+          opponent.board.state,
+          this.plays
+        );
         this.makeMove(choice, opponent);
         return choice;
       }
@@ -58,7 +67,7 @@ legalPlay = (position, turn, state, plays) => {
 //returns false if it doesn't find one or it's the first play
 //returns the position of the last successful hit and unsunk ship otherwise
 findFirstShip = (plays, state) => {
-  if (plays.length <= 0){
+  if (plays.length <= 0) {
     return false;
   }
   for (let i = 0; i < plays.length; i++) {
@@ -72,6 +81,7 @@ findFirstShip = (plays, state) => {
 };
 findAHit = (firstShip, state, plays) => {
   let choice = -1;
+
   while (!legalPlay(choice, true, state, plays)) {
     let random = Math.floor(Math.random() * 4);
     switch (random) {
@@ -81,15 +91,26 @@ findAHit = (firstShip, state, plays) => {
       case 1:
         choice = firstShip + 1;
         break;
-       case 2:
+      case 2:
         choice = firstShip - 10;
         break;
       case 3:
         choice = firstShip + 10;
-        break; 
+        break;
+    }
+    let firstChoice = choice;
+    while (plays.includes(choice)) {
+      choice += firstChoice;
     }
   }
-  console.log(choice);
+  //if it can't find a valid play randomize again
+  if (!legalPlay(choice, true, state, plays)) {
+    console.log("couldn't find a valid play");
+    choice = Math.floor(Math.random() * 100);
+    while (!legalPlay(choice, true, state, plays)) {
+      choice = Math.floor(Math.random() * 100);
+    }
+  }
   return choice;
 };
 

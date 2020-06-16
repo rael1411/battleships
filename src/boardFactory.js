@@ -15,9 +15,10 @@ const boardFactory = () => {
       //checks if the position can hold a ship
       // if true the ship gets added, otherwise returns false
       if (checkValidPosition(position, size, align, state) === false) {
+        console.log("not valid");
         return false;
       } else {
-        let thisShip = battleshipFactory(size, align);
+        let thisShip = battleshipFactory(size, align, position);
         this.state[position + 1].ship = Object.assign(
           this.state[position].ship,
           thisShip
@@ -83,7 +84,7 @@ const boardFactory = () => {
 
 function firstPosition(state, position, align) {
   if (align == "horiz") {
-    if ( position - 1 < 0 || state[position].ship !== state[position - 1].ship) {
+    if (position - 1 < 0 || state[position].ship !== state[position - 1].ship) {
       return position;
     } else {
       return firstPosition(state, position - 1, align);
@@ -116,18 +117,20 @@ function checkValidPosition(position, size, align, state) {
     //checks if another ship occupies that space
     for (let i = 0; i < size; i++) {
       if (state.presence === true) {
+        console.log("found another ship");
         return false;
       }
     }
-  }
-  if (position + size * 10 > 99) {
-    return false;
-  }
-  for (i = 0; i < size; i++) {
-    if (state[position + 10 * i].presence === true) {
+  } else if (align === "vert") {
+    if (position + size * 10 > 99) {
       return false;
     }
+    for (i = 0; i < size; i++) {
+      if (state[position + 10 * i].presence === true) {
+        return false;
+      }
+    }
+    return true;
   }
-  return true;
 }
 module.exports = boardFactory;
