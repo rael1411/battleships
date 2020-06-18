@@ -13,23 +13,6 @@ const renderBoard = (player, boardID, opponent) => {
       //when the board is clicked the opponent has made a move
       if (opponent.makeMove(position, player)) {
         game.gameLoop(player, opponent);
-        if (player.board.state[position].presence === true) {
-          if (player.board.state[position].ship.sunk() === true) {
-            for (
-              let i = 0;
-              i < player.board.state[position].ship.coordinates.length;
-              i++
-            ) {
-              let sunkShip =  document.querySelector(`div#${boardID} > div.cell[position='${player.board.state[position].ship.coordinates[i]}']`);
-              sunkShip.classList.add("sunk");
-              sunkShip.classList.remove("hit");
-            }
-          } else {
-            element.classList.add("hit");
-          }
-        } else {
-          element.classList.add("shot");
-        }
       }
     });
     playerBoard.appendChild(element);
@@ -37,10 +20,46 @@ const renderBoard = (player, boardID, opponent) => {
   container.appendChild(playerBoard);
 };
 
-const makeHit = (position) => {}
-const makeShot = (position) => {}
-const makeSunk = (position) => {}
-exports.makeHit = makeHit;
-exports.makeShot = makeShot;
-exports.makeSunk = makeSunk;
+const modifyCell = (player, position) => {
+  let cell = player.board.state[position];
+  let place = document.querySelector(
+    `div#${player.name + "Board"} > div.cell[position='${position}']`
+  );
+  if (cell.presence === false) {
+    place.classList.add("shot");
+  } else if (cell.presence === true) {
+    if (cell.ship.sunk() === true) {
+      sinkShip(position, player);
+    } else {
+      place.classList.add("hit");
+    }
+  }
+};
+
+const sinkShip = (position, player) => {
+  for (
+    let i = 0;
+    i < player.board.state[position].ship.coordinates.length;
+    i++
+  ) {
+
+    let sunkShip = document.querySelector(
+      `div#${player.name + "Board"} > div.cell[position='${player.board.state[position].ship.coordinates[i]}']`
+    );
+    sunkShip.classList.add("sunk");
+    sunkShip.classList.remove("hit");
+  }
+};
+
+const gameOverScreen = (result) => {
+  name = result.name;
+  const container = document.getElementById("container");
+  let winner = document.createElement("h1");
+  winner.classList.add("winner");
+  winner.textContent = `${name} has won!`;
+  container.appendChild(winner);
+}
+
+exports.gameOverScreen = gameOverScreen;
 exports.renderBoard = renderBoard;
+exports.modifyCell = modifyCell;

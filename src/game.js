@@ -13,34 +13,35 @@ const sampleGame = () => {
   computer.board.addShip(80, 3, "horiz");
   computer.board.addShip(90, 3, "horiz");
   computer.board.addShip(40, 2, "horiz");
-  console.log(computer.board.state)
-  DOM.renderBoard(user, "playerBoard", computer);
-  DOM.renderBoard(computer, "computerBoard", user);
+  DOM.renderBoard(user, user.name + "Board", computer);
+  DOM.renderBoard(computer, computer.name + "Board", user);
   computer.makeMove(4, user);
 };
 
-const gameOver = (playerOne, playerTwo) => {
-  if (playerOne.board.allSunk()){
-    return playerTwo;
-  }
-  else if (playerTwo.board.allSunk()){
-    return playerOne;
-  }
-  else {
+const gameLoop = (computer, user) => {
+
+  if (computer.turn === false && user.turn === false){
     return false;
   }
-}
-
-const gameLoop = (computer, user) => {
-  if (gameOver(user, computer) === user || gameOver(user, computer) === computer){
-    console.log(`The winner is: ${gameOver(user, computer).name}`)
+  if (!gameOver(user, computer)) {
+    if ((computer.turn = true)) {
+      computer.aiPlay(user);
+    }
   }
-  computer.board.state;
-  if (computer.turn = true){
-    computer.aiPlay(user);
+};
+const gameOver = (playerOne, playerTwo) => {
+  if (playerOne.board.allSunk()) {
+    DOM.gameOverScreen(playerTwo);
+    playerOne.turn = false;
+    playerTwo.turn = false;
+  } else if (playerTwo.board.allSunk()) {
+    DOM.gameOverScreen(playerOne);
+    playerOne.turn = false;
+    playerTwo.turn = false;
+  } else {
+    return false;
   }
-}
+};
 exports.sampleGame = sampleGame;
 exports.gameOver = gameOver;
 exports.gameLoop = gameLoop;
-

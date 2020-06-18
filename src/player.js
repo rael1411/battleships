@@ -1,5 +1,7 @@
 const boardFactory = require("./boardFactory");
 const game = require("./game");
+const DOM = require("./DOM");
+
 const player = (turn, name = "default") => {
   let plays = [];
   return {
@@ -8,10 +10,6 @@ const player = (turn, name = "default") => {
     turn: turn,
     plays: plays,
     makeMove(coordinates, opponent) {
-      if (game.gameOver(this, opponent) === this){
-        this.turn = false;
-        opponent.turn = false;
-      }
       //refuses to make a move if it's not the player's turn
       if (legalPlay(coordinates, this.turn, opponent.board.state, plays)) {
         //passes turn
@@ -19,10 +17,15 @@ const player = (turn, name = "default") => {
         opponent.turn = true;
         this.plays.push(coordinates);
         opponent.board.receiveAttack(coordinates);
-        return true;
+        DOM.modifyCell(opponent, coordinates);
+        if (game.gameOver(this, opponent) != false){
+          this.turn = false;
+          opponent.turn = false;
+        }        return true;
       } else {
         return false;
       }
+
     },
     aiPlay(opponent) {
       //if the previous move hit a ship
@@ -99,15 +102,12 @@ findAHit = (firstShip, state, plays) => {
         break;
     }
     let firstChoice = choice;
+    //try incrementing
     while (plays.includes(choice)) {
       choice += firstChoice;
     }
-  }
-  //if it can't find a valid play randomize again
-  if (!legalPlay(choice, true, state, plays)) {
-    console.log("couldn't find a valid play");
-    choice = Math.floor(Math.random() * 100);
-    while (!legalPlay(choice, true, state, plays)) {
+      //if it can't find a valid play randomize again
+    if (!legalPlay((choice), true, state, plays)) {
       choice = Math.floor(Math.random() * 100);
     }
   }

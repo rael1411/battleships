@@ -15,7 +15,6 @@ const boardFactory = () => {
       //checks if the position can hold a ship
       // if true the ship gets added, otherwise returns false
       if (checkValidPosition(position, size, align, state) === false) {
-        console.log("not valid");
         return false;
       } else {
         let thisShip = battleshipFactory(size, align, position);
