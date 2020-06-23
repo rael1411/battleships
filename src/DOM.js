@@ -1,6 +1,10 @@
 const game = require("./game");
 const renderBoard = (player, boardID, opponent) => {
-  const container = document.getElementById("container");
+  let container = document.getElementById("container");
+  if (container === null){
+    container = document.createElement("div");
+    container.id = "container";
+  }
   const playerBoard = document.createElement("div");
   playerBoard.id = boardID;
   playerBoard.classList.add("board");
@@ -12,6 +16,7 @@ const renderBoard = (player, boardID, opponent) => {
       let position = element.getAttribute("position");
       //when the board is clicked the opponent has made a move
       if (opponent.makeMove(position, player)) {
+        modifyCell(player, position);
         game.gameLoop(player, opponent);
       }
     });

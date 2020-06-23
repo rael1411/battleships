@@ -1,41 +1,44 @@
 const player = require("./player.js");
 const boardFactory = require("./boardFactory.js");
-let playerA;
-let computer;
+
 
 beforeEach(() => {
-  playerA = player(true, "alessio");
+  user = player(true, "user");
   computer = player(false, "computer");
-
-  playerA.board = boardFactory();
+  user.board = boardFactory();
   computer.board = boardFactory();
+  user.board.addShip(42, 5, "vert");
+  computer.board.addShip(42, 5, "vert");
+
+
+  
 });
 it("refuses to attack if the turn is wrong", () => {
-  expect(computer.makeMove(5, playerA)).toBe(false);
+  expect(computer.makeMove(5, user)).toBe(false);
 });
 it("attacks correctly", () => {
-  playerA.makeMove(4, computer);
+  user.makeMove(4, computer);
   expect(computer.board.state[4].shot).toBe(true);
 });
 it("passes the turn", () => {
-  playerA.makeMove(4, computer);
-  expect(playerA.turn).toBe(false);
+  user.makeMove(4, computer);
+  expect(user.turn).toBe(false);
   expect(computer.turn).toBe(true);
 });
 
 it("AI can hit empty space", () => {
   computer.turn = true;
-  computer.aiPlay(playerA);
-  expect(playerA.board.state).toEqual(
+  computer.aiPlay(user);
+  expect(user.board.state).toEqual(
     expect.arrayContaining([{shot: true, presence: false, ship: {}}])
   );
 });
 
 it("AI tries to sink ships", () => {
-  playerA.board.addShip(1, 4, "horiz");
+  user.board.addShip(1, 4, "horiz");
   computer.turn = true;
-  computer.makeMove(2, playerA);
+  computer.makeMove(2, user);
   computer.turn = true;
-  testplay = computer.aiPlay(playerA);
+  testplay = computer.aiPlay(user);
   expect(testplay === 1 || testplay === 3 || testplay == 12).toBeTruthy();
 });

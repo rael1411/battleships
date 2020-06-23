@@ -31,6 +31,7 @@ const boardFactory = () => {
             this.state[position + i].presence = true;
           }
           ships.push(state[position].ship);
+          return true;
         } else {
           this.state[position].ship = Object.assign(
             this.state[position].ship,
@@ -42,6 +43,7 @@ const boardFactory = () => {
             this.state[position + i * 10].presence = true;
             this.state[position + i * 10].ship = this.state[position].ship;
           }
+          return true;
         }
       }
     },
@@ -115,7 +117,7 @@ function checkValidPosition(position, size, align, state) {
     }
     //checks if another ship occupies that space
     for (let i = 0; i < size; i++) {
-      if (state.presence === true) {
+      if (state[position+i].presence === true) {
         console.log("found another ship");
         return false;
       }

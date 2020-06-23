@@ -17,7 +17,6 @@ const player = (turn, name = "default") => {
         opponent.turn = true;
         this.plays.push(coordinates);
         opponent.board.receiveAttack(coordinates);
-        DOM.modifyCell(opponent, coordinates);
         if (game.gameOver(this, opponent) != false){
           this.turn = false;
           opponent.turn = false;
